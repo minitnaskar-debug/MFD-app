@@ -1,0 +1,286 @@
+
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MFD - Multi Food Delivery</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background: #f7f8f4;
+  color: #222;
+}
+
+header {
+  background: #087f43;
+  color: white;
+  padding: 20px;
+}
+
+.logo {
+  font-size: 28px;
+  font-weight: bold;
+}
+
+header p {
+  margin-top: 6px;
+  font-size: 14px;
+}
+
+.location {
+  margin-top: 15px;
+  background: #ffffff20;
+  padding: 12px;
+  border-radius: 10px;
+}
+
+.search {
+  padding: 15px;
+}
+
+.search input {
+  width: 100%;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  font-size: 16px;
+}
+
+.banner {
+  margin: 0 15px;
+  background: linear-gradient(120deg, #087f43, #20ae68);
+  color: white;
+  padding: 25px;
+  border-radius: 16px;
+}
+
+.banner h2 {
+  font-size: 25px;
+  margin-bottom: 10px;
+}
+
+section {
+  padding: 20px 15px;
+}
+
+.section-title {
+  font-size: 21px;
+  margin-bottom: 15px;
+}
+
+.categories {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.category {
+  background: white;
+  border-radius: 12px;
+  text-align: center;
+  padding: 15px 5px;
+  font-size: 13px;
+}
+
+.category span {
+  display: block;
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+.products {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.product {
+  background: white;
+  padding: 12px;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px #00000008;
+}
+
+.product .emoji {
+  font-size: 55px;
+  text-align: center;
+  padding: 12px;
+}
+
+.product h3 {
+  font-size: 16px;
+  margin: 8px 0;
+}
+
+.product p {
+  color: #666;
+  font-size: 13px;
+}
+
+.price {
+  color: #087f43;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.product button {
+  width: 100%;
+  padding: 10px;
+  background: #087f43;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+.cart {
+  position: fixed;
+  bottom: 15px;
+  left: 15px;
+  right: 15px;
+  background: #087f43;
+  color: white;
+  padding: 16px;
+  border-radius: 12px;
+  text-align: center;
+  font-weight: bold;
+  box-shadow: 0 4px 15px #0003;
+}
+
+footer {
+  text-align: center;
+  padding: 30px 20px 90px;
+  color: #777;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">🛍️ MFD</div>
+  <p>Multi Food Delivery</p>
+
+  <div class="location">
+    📍 Delivering to your location
+  </div>
+</header>
+
+<div class="search">
+  <input id="search" type="text"
+  placeholder="🔍 Search vegetables, food, groceries..."
+  oninput="searchProducts()">
+</div>
+
+<div class="banner">
+  <h2>সবকিছু এখন<br>আপনার হাতের মুঠোয়!</h2>
+  <p>Fresh Products • Fast Delivery</p>
+</div>
+
+<section>
+  <h2 class="section-title">Shop by Category</h2>
+
+  <div class="categories">
+    <div class="category"><span>🥦</span>সবজি</div>
+    <div class="category"><span>🍎</span>ফল</div>
+    <div class="category"><span>🍗</span>মাছ-মাংস</div>
+    <div class="category"><span>🍔</span>খাবার</div>
+    <div class="category"><span>🥛</span>দুধ</div>
+    <div class="category"><span>🍚</span>মুদি</div>
+    <div class="category"><span>👕</span>ফ্যাশন</div>
+    <div class="category"><span>🛒</span>অন্যান্য</div>
+  </div>
+</section>
+
+<section>
+  <h2 class="section-title">🔥 Popular Products</h2>
+  <div class="products" id="products"></div>
+</section>
+
+<div class="cart" onclick="checkout()">
+  🛒 View Cart | <span id="count">0</span> items
+  | ₹<span id="total">0</span>
+</div>
+
+<footer>
+  <h3>MFD - Multi Food Delivery</h3>
+  <p>তোমার এলাকার বিশ্বস্ত অনলাইন বাজার ❤️</p>
+</footer>
+
+<script>
+const items = [
+  {name:"আলু", price:25, unit:"1 kg", emoji:"🥔"},
+  {name:"পেঁয়াজ", price:35, unit:"1 kg", emoji:"🧅"},
+  {name:"টমেটো", price:30, unit:"1 kg", emoji:"🍅"},
+  {name:"কলা", price:40, unit:"1 dozen", emoji:"🍌"},
+  {name:"আপেল", price:120, unit:"1 kg", emoji:"🍎"},
+  {name:"দুধ", price:30, unit:"500 ml", emoji:"🥛"},
+  {name:"ডিম", price:70, unit:"6 pcs", emoji:"🥚"},
+  {name:"বার্গার", price:99, unit:"1 piece", emoji:"🍔"}
+];
+
+let cart = [];
+
+function displayProducts(list) {
+  document.getElementById("products").innerHTML =
+    list.map((item, index) => `
+      <div class="product">
+        <div class="emoji">${item.emoji}</div>
+        <h3>${item.name}</h3>
+        <p>${item.unit}</p>
+        <div class="price">₹${item.price}</div>
+        <button onclick="addToCart('${item.name}')">
+          ADD +
+        </button>
+      </div>
+    `).join("");
+}
+
+function searchProducts() {
+  const query = document.getElementById("search")
+    .value.toLowerCase();
+
+  const filtered = items.filter(item =>
+    item.name.toLowerCase().includes(query)
+  );
+
+  displayProducts(filtered);
+}
+
+function addToCart(name) {
+  const item = items.find(p => p.name === name);
+  cart.push(item);
+  updateCart();
+}
+
+function updateCart() {
+  document.getElementById("count").innerText =
+    cart.length;
+
+  document.getElementById("total").innerText =
+    cart.reduce((sum, item) => sum + item.price, 0);
+}
+
+function checkout() {
+  if (cart.length === 0) {
+    alert("আপনার Cart খালি!");
+    return;
+  }
+
+  alert("আপনার অর্ডার তৈরি হচ্ছে! পরবর্তী ধাপে Checkout যোগ হবে।");
+}
+
+displayProducts(items);
+</script>
+
+</body>
+  </html>
+  
