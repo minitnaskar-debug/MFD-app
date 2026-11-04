@@ -269,14 +269,33 @@ function updateCart() {
     cart.reduce((sum, item) => sum + item.price, 0);
 }
 
+
 function checkout() {
   if (cart.length === 0) {
     alert("আপনার Cart খালি!");
     return;
   }
 
-  alert("আপনার অর্ডার তৈরি হচ্ছে! পরবর্তী ধাপে Checkout যোগ হবে।");
+  let message = "🛍️ *NEW MFD ORDER*%0A%0A";
+
+  cart.forEach((item, index) => {
+    message += `${index + 1}. ${item.name} - ₹${item.price}%0A`;
+  });
+
+  let total = cart.reduce(
+    (sum, item) => sum + item.price, 0
+  );
+
+  message += `%0A💰 Total: ₹${total}`;
+  message += "%0A%0APlease confirm my order.";
+
+  let phone = "919832306215";
+
+  let url = `https://wa.me/${phone}?text=${message}`;
+
+  window.open(url, "_blank");
 }
+
 
 displayProducts(items);
 </script>
