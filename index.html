@@ -1,10 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="bn">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>MFD - Multi Food Delivery</title>
 
 <style>
@@ -18,6 +16,7 @@
 body {
   background: #f7f8f4;
   color: #222;
+  padding-bottom: 90px;
 }
 
 header {
@@ -159,9 +158,135 @@ section {
   z-index: 1000;
 }
 
+/* Checkout Modal */
+
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: #0008;
+  z-index: 2000;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
+}
+
+.modal-content {
+  background: white;
+  width: 100%;
+  max-width: 450px;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 16px;
+  padding: 22px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.close-btn {
+  background: #eee;
+  border: none;
+  font-size: 24px;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.cart-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+  gap: 10px;
+}
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.quantity-controls button {
+  border: none;
+  background: #e5f5eb;
+  color: #087f43;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.checkout-total {
+  background: #f0f8f3;
+  padding: 15px;
+  border-radius: 10px;
+  margin: 15px 0;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+}
+
+.form-group {
+  margin-bottom: 14px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 7px;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 9px;
+  font-size: 15px;
+  outline-color: #087f43;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 75px;
+}
+
+.payment-option {
+  background: #f5f5f5;
+  padding: 12px;
+  border-radius: 9px;
+  font-size: 14px;
+}
+
+.place-order-btn {
+  width: 100%;
+  background: #087f43;
+  color: white;
+  padding: 15px;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 12px;
+}
+
+.place-order-btn:active {
+  transform: scale(0.98);
+}
+
 footer {
   text-align: center;
-  padding: 30px 20px 100px;
+  padding: 30px 20px;
   color: #777;
 }
 
@@ -233,6 +358,84 @@ footer {
   ₹<span id="total">0</span>
 </div>
 
+<!-- Checkout Modal -->
+
+<div class="modal" id="checkoutModal">
+
+  <div class="modal-content">
+
+    <div class="modal-header">
+      <h2>🛒 আপনার অর্ডার</h2>
+      <button class="close-btn" onclick="closeCheckout()">×</button>
+    </div>
+
+    <div id="cartItems"></div>
+
+    <div class="checkout-total">
+      <span>মোট দাম</span>
+      <span>₹<span id="checkoutTotal">0</span></span>
+    </div>
+
+    <h3 style="margin-bottom:15px;">📍 ডেলিভারি তথ্য</h3>
+
+    <form id="orderForm" onsubmit="placeOrder(event)">
+
+      <div class="form-group">
+        <label>আপনার নাম *</label>
+        <input
+          type="text"
+          id="customerName"
+          placeholder="সম্পূর্ণ নাম লিখুন"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label>মোবাইল নম্বর *</label>
+        <input
+          type="tel"
+          id="customerPhone"
+          placeholder="10 সংখ্যার মোবাইল নম্বর"
+          pattern="[6-9][0-9]{9}"
+          maxlength="10"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label>সম্পূর্ণ ডেলিভারি ঠিকানা *</label>
+        <textarea
+          id="customerAddress"
+          placeholder="বাড়ি/ফ্ল্যাট, রাস্তা, এলাকা, পিন কোড"
+          required
+        ></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>অতিরিক্ত নির্দেশ (Optional)</label>
+        <textarea
+          id="orderNote"
+          placeholder="কোনও বিশেষ নির্দেশ থাকলে লিখুন"
+        ></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>💵 পেমেন্ট পদ্ধতি</label>
+        <div class="payment-option">
+          <input type="radio" checked disabled>
+          Cash on Delivery (ডেলিভারির সময় টাকা দিন)
+        </div>
+      </div>
+
+      <button type="submit" class="place-order-btn">
+        ✅ অর্ডার কনফার্ম করুন
+      </button>
+
+    </form>
+
+  </div>
+</div>
+
 <footer>
   <h3>MFD - Multi Food Delivery</h3>
   <p>তোমার এলাকার বিশ্বস্ত অনলাইন বাজার ❤️</p>
@@ -241,14 +444,14 @@ footer {
 <script>
 
 const items = [
-  {name:"আলু", price:25, unit:"1 kg", emoji:"🥔"},
-  {name:"পেঁয়াজ", price:35, unit:"1 kg", emoji:"🧅"},
-  {name:"টমেটো", price:30, unit:"1 kg", emoji:"🍅"},
-  {name:"কলা", price:40, unit:"1 dozen", emoji:"🍌"},
-  {name:"আপেল", price:120, unit:"1 kg", emoji:"🍎"},
-  {name:"দুধ", price:30, unit:"500 ml", emoji:"🥛"},
-  {name:"ডিম", price:70, unit:"6 pcs", emoji:"🥚"},
-  {name:"বার্গার", price:99, unit:"1 piece", emoji:"🍔"}
+  {id:1, name:"আলু", price:25, unit:"1 kg", emoji:"🥔"},
+  {id:2, name:"পেঁয়াজ", price:35, unit:"1 kg", emoji:"🧅"},
+  {id:3, name:"টমেটো", price:30, unit:"1 kg", emoji:"🍅"},
+  {id:4, name:"কলা", price:40, unit:"1 dozen", emoji:"🍌"},
+  {id:5, name:"আপেল", price:120, unit:"1 kg", emoji:"🍎"},
+  {id:6, name:"দুধ", price:30, unit:"500 ml", emoji:"🥛"},
+  {id:7, name:"ডিম", price:70, unit:"6 pcs", emoji:"🥚"},
+  {id:8, name:"বার্গার", price:99, unit:"1 piece", emoji:"🍔"}
 ];
 
 let cart = [];
@@ -267,7 +470,7 @@ function displayProducts(list) {
 
         <div class="price">₹${item.price}</div>
 
-        <button onclick="addToCart('${item.name}')">
+        <button onclick="addToCart(${item.id})">
           ADD +
         </button>
 
@@ -287,62 +490,174 @@ function searchProducts() {
   displayProducts(filtered);
 }
 
-function addToCart(name) {
+function addToCart(id) {
 
-  const item = items.find(p => p.name === name);
+  const item = items.find(p => p.id === id);
 
   if (!item) return;
 
-  cart.push(item);
+  const existing = cart.find(p => p.id === id);
+
+  if (existing) {
+    existing.quantity++;
+  } else {
+    cart.push({...item, quantity:1});
+  }
 
   updateCart();
 }
 
 function updateCart() {
 
-  document.getElementById("count").innerText =
-    cart.length;
+  const count = cart.reduce(
+    (sum, item) => sum + item.quantity, 0
+  );
 
-  document.getElementById("total").innerText =
-    cart.reduce((sum, item) => sum + item.price, 0);
+  const total = cart.reduce(
+    (sum, item) => sum + item.price * item.quantity, 0
+  );
+
+  document.getElementById("count").innerText = count;
+  document.getElementById("total").innerText = total;
+
+  renderCartItems();
+}
+
+function renderCartItems() {
+
+  const container = document.getElementById("cartItems");
+
+  if (!cart.length) {
+    container.innerHTML = "<p>আপনার কার্ট খালি।</p>";
+    return;
+  }
+
+  container.innerHTML = cart.map(item => `
+    <div class="cart-item">
+
+      <div>
+        <strong>${item.emoji} ${item.name}</strong>
+        <p style="font-size:13px;color:#777;">
+          ₹${item.price} × ${item.quantity}
+        </p>
+      </div>
+
+      <div class="quantity-controls">
+
+        <button onclick="changeQuantity(${item.id},-1)">−</button>
+
+        <strong>${item.quantity}</strong>
+
+        <button onclick="changeQuantity(${item.id},1)">+</button>
+
+      </div>
+
+      <strong>₹${item.price * item.quantity}</strong>
+
+    </div>
+  `).join("");
+
+  const total = cart.reduce(
+    (sum, item) => sum + item.price * item.quantity, 0
+  );
+
+  document.getElementById("checkoutTotal").innerText = total;
+}
+
+function changeQuantity(id, change) {
+
+  const item = cart.find(p => p.id === id);
+
+  if (!item) return;
+
+  item.quantity += change;
+
+  if (item.quantity <= 0) {
+    cart = cart.filter(p => p.id !== id);
+  }
+
+  updateCart();
 }
 
 function checkout() {
 
   if (cart.length === 0) {
-
     alert("আপনার Cart খালি! আগে কিছু পণ্য যোগ করুন।");
-
     return;
   }
 
-  let message = "🛍️ NEW MFD ORDER\n\n";
+  renderCartItems();
+
+  document.getElementById("checkoutModal").style.display = "flex";
+}
+
+function closeCheckout() {
+
+  document.getElementById("checkoutModal").style.display = "none";
+}
+
+function placeOrder(event) {
+
+  event.preventDefault();
+
+  if (cart.length === 0) {
+    alert("আপনার Cart খালি!");
+    closeCheckout();
+    return;
+  }
+
+  const name = document.getElementById("customerName").value.trim();
+  const phone = document.getElementById("customerPhone").value.trim();
+  const address = document.getElementById("customerAddress").value.trim();
+  const note = document.getElementById("orderNote").value.trim();
+
+  if (!name || !phone || !address) {
+    alert("দয়া করে সমস্ত প্রয়োজনীয় তথ্য পূরণ করুন।");
+    return;
+  }
+
+  const total = cart.reduce(
+    (sum, item) => sum + item.price * item.quantity, 0
+  );
+
+  let message = "🛍️ *NEW MFD ORDER*\n\n";
+
+  message += "📋 *Customer Details*\n";
+  message += "👤 Name: " + name + "\n";
+  message += "📞 Phone: " + phone + "\n";
+  message += "📍 Address: " + address + "\n\n";
+
+  message += "🛒 *Order Items:*\n";
 
   cart.forEach((item, index) => {
 
     message +=
       (index + 1) + ". " +
-      item.name + " - ₹" +
-      item.price + " (" +
-      item.unit + ")\n";
+      item.name + " × " +
+      item.quantity + " = ₹" +
+      (item.price * item.quantity) + "\n";
 
   });
 
-  const total = cart.reduce(
-    (sum, item) => sum + item.price, 0
-  );
+  message += "\n💰 *Total: ₹" + total + "*";
+  message += "\n💵 Payment: Cash on Delivery";
 
-  message += "\n💰 Total: ₹" + total;
+  if (note) {
+    message += "\n📝 Note: " + note;
+  }
 
-  message += "\n\nPlease confirm my order.";
+  message += "\n\nPlease confirm this order.";
 
-  const phone = "919832306215";
+  const whatsappNumber = "919832306215";
 
-  const url =
-    "https://wa.me/" + phone +
+  const whatsappURL =
+    "https://wa.me/" + whatsappNumber +
     "?text=" + encodeURIComponent(message);
 
-  window.location.href = url;
+  window.open(whatsappURL, "_blank");
+
+  alert("আপনার WhatsApp-এ অর্ডার পাঠানোর ব্যবস্থা করা হয়েছে। Send বাটন চাপুন।");
+
 }
 
 displayProducts(items);
