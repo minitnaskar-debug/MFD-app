@@ -4,6 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>MFD - Multi Food Delivery</title>
 
 <style>
@@ -139,6 +140,7 @@ section {
   border: none;
   border-radius: 8px;
   font-weight: bold;
+  cursor: pointer;
 }
 
 .cart {
@@ -153,12 +155,29 @@ section {
   text-align: center;
   font-weight: bold;
   box-shadow: 0 4px 15px #0003;
+  cursor: pointer;
+  z-index: 1000;
 }
 
 footer {
   text-align: center;
-  padding: 30px 20px 90px;
+  padding: 30px 20px 100px;
   color: #777;
+}
+
+@media (min-width: 768px) {
+  .products {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .categories {
+    grid-template-columns: repeat(8, 1fr);
+  }
+
+  header, section, .search {
+    padding-left: 5%;
+    padding-right: 5%;
+  }
 }
 </style>
 </head>
@@ -175,9 +194,12 @@ footer {
 </header>
 
 <div class="search">
-  <input id="search" type="text"
-  placeholder="🔍 Search vegetables, food, groceries..."
-  oninput="searchProducts()">
+  <input
+    id="search"
+    type="text"
+    placeholder="🔍 Search vegetables, food, groceries..."
+    oninput="searchProducts()"
+  >
 </div>
 
 <div class="banner">
@@ -206,8 +228,9 @@ footer {
 </section>
 
 <div class="cart" onclick="checkout()">
-  🛒 View Cart | <span id="count">0</span> items
-  | ₹<span id="total">0</span>
+  🛒 View Cart |
+  <span id="count">0</span> items |
+  ₹<span id="total">0</span>
 </div>
 
 <footer>
@@ -216,6 +239,7 @@ footer {
 </footer>
 
 <script>
+
 const items = [
   {name:"আলু", price:25, unit:"1 kg", emoji:"🥔"},
   {name:"পেঁয়াজ", price:35, unit:"1 kg", emoji:"🧅"},
@@ -230,21 +254,29 @@ const items = [
 let cart = [];
 
 function displayProducts(list) {
+
   document.getElementById("products").innerHTML =
-    list.map((item, index) => `
+    list.map(item => `
       <div class="product">
+
         <div class="emoji">${item.emoji}</div>
+
         <h3>${item.name}</h3>
+
         <p>${item.unit}</p>
+
         <div class="price">₹${item.price}</div>
+
         <button onclick="addToCart('${item.name}')">
           ADD +
         </button>
+
       </div>
     `).join("");
 }
 
 function searchProducts() {
+
   const query = document.getElementById("search")
     .value.toLowerCase();
 
@@ -256,12 +288,18 @@ function searchProducts() {
 }
 
 function addToCart(name) {
+
   const item = items.find(p => p.name === name);
+
+  if (!item) return;
+
   cart.push(item);
+
   updateCart();
 }
 
 function updateCart() {
+
   document.getElementById("count").innerText =
     cart.length;
 
@@ -269,46 +307,47 @@ function updateCart() {
     cart.reduce((sum, item) => sum + item.price, 0);
 }
 
-
 function checkout() {
+
   if (cart.length === 0) {
-    alert("আপনার Cart খালি!");
+
+    alert("আপনার Cart খালি! আগে কিছু পণ্য যোগ করুন।");
+
     return;
   }
 
-  let message = "🛍️ *NEW MFD ORDER*%0A%0A";
+  let message = "🛍️ NEW MFD ORDER\n\n";
 
   cart.forEach((item, index) => {
-    message += `${index + 1}. ${item.name} - ₹${item.price}%0A`;
+
+    message +=
+      (index + 1) + ". " +
+      item.name + " - ₹" +
+      item.price + " (" +
+      item.unit + ")\n";
+
   });
 
-  
-  message += "\n\n💰 Total: ₹" + total;
-  message += "\n📍 Please confirm my order.";
+  const total = cart.reduce(
+    (sum, item) => sum + item.price, 0
+  );
 
-  let phone = "919832306215";
+  message += "\n💰 Total: ₹" + total;
 
-  let url = "https://wa.me/" + phone +
+  message += "\n\nPlease confirm my order.";
+
+  const phone = "919832306215";
+
+  const url =
+    "https://wa.me/" + phone +
     "?text=" + encodeURIComponent(message);
 
   window.location.href = url;
 }
-  
-
-  message += `%0A💰 Total: ₹${total}`;
-  message += "%0A%0APlease confirm my order.";
-
-  let phone = "919832306215";
-
-  let url = `https://wa.me/${phone}?text=${message}`;
-
-  window.open(url, "_blank");
-}
-
 
 displayProducts(items);
+
 </script>
 
 </body>
-  </html>
-  
+</html>
