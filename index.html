@@ -282,9 +282,18 @@ function checkout() {
     message += `${index + 1}. ${item.name} - ₹${item.price}%0A`;
   });
 
-  let total = cart.reduce(
-    (sum, item) => sum + item.price, 0
-  );
+  
+  message += "\n\n💰 Total: ₹" + total;
+  message += "\n📍 Please confirm my order.";
+
+  let phone = "919832306215";
+
+  let url = "https://wa.me/" + phone +
+    "?text=" + encodeURIComponent(message);
+
+  window.location.href = url;
+}
+  
 
   message += `%0A💰 Total: ₹${total}`;
   message += "%0A%0APlease confirm my order.";
